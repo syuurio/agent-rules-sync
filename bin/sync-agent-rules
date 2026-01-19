@@ -1,0 +1,321 @@
+#!/usr/bin/env bash
+
+# Agent Rules Sync - Unified configuration management for AI agents
+# Version: 1.0.0
+# License: MIT
+# Repository: https://github.com/syuurio/agent-rules-sync
+
+set -euo pipefail
+
+# Version information
+VERSION="1.0.0"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SOURCE_FILE="${SCRIPT_DIR}/../AGENTS.md"
+
+# Color output functions
+color_red() { echo -e "\033[0;31m$*\033[0m"; }
+color_green() { echo -e "\033[0;32m$*\033[0m"; }
+color_yellow() { echo -e "\033[0;33m$*\033[0m"; }
+color_blue() { echo -e "\033[0;34m$*\033[0m"; }
+color_bold() { echo -e "\033[1m$*\033[0m"; }
+
+# Status message functions
+success() { color_green "✓ $*"; }
+error() { color_red "✗ $*"; }
+warning() { color_yellow "⚠ $*"; }
+info() { color_blue "ℹ $*"; }
+
+# Tool configuration
+# Get tool config path by name
+get_tool_path() {
+    case "$1" in
+        claude)
+            echo "$HOME/.claude/CLAUDE.md"
+            ;;
+        windsurf)
+            echo "$HOME/.codeium/windsurf/memories/global_rules.md"
+            ;;
+        gemini)
+            echo "$HOME/.gemini/GEMINI.md"
+            ;;
+        antigravity)
+            echo "$HOME/.gemini/antigravity/AGENTS.md"
+            ;;
+        codex)
+            echo "$HOME/.codex/AGENTS.md"
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
+# List of all supported tools
+ALL_TOOLS=("claude" "windsurf" "gemini" "antigravity" "codex")
+
+# Flags
+DRY_RUN=false
+VERBOSE=false
+NO_BACKUP=false
+SPECIFIC_TOOL=""
+
+# Display usage information
+show_usage() {
+    cat << EOF
+$(color_bold "Agent Rules Sync v${VERSION}")
+
+A unified configuration management tool for AI agent rules across multiple platforms.
+
+$(color_bold "USAGE:")
+    sync-agent-rules [OPTIONS]
+
+$(color_bold "OPTIONS:")
+    --help              Show this help message
+    --version           Display version information
+    --list-tools        List all supported tools
+    --dry-run           Preview operations without executing
+    --verbose           Show detailed output
+    --tool <name>       Sync specific tool only
+    --source <path>     Specify custom source file (default: AGENTS.md)
+    --no-backup         Skip backup before overwriting
+
+$(color_bold "EXAMPLES:")
+    sync-agent-rules                    # Sync to all tools
+    sync-agent-rules --dry-run          # Preview what will be synced
+    sync-agent-rules --tool claude      # Sync to Claude Code only
+    sync-agent-rules --verbose          # Show detailed sync process
+
+$(color_bold "SUPPORTED TOOLS:")
+    $(list_tools | sed 's/^/    /')
+
+$(color_bold "REPOSITORY:")
+    https://github.com/syuurio/agent-rules-sync
+
+EOF
+}
+
+# Display version information
+show_version() {
+    echo "Agent Rules Sync v${VERSION}"
+    echo "License: MIT"
+}
+
+# List all supported tools
+list_tools() {
+    for tool in "${ALL_TOOLS[@]}"; do
+        local config_path="$(get_tool_path "$tool")"
+        if [[ -f "$config_path" ]]; then
+            echo "$(color_green "●") ${tool} (installed)"
+        else
+            echo "$(color_yellow "○") ${tool} (not installed)"
+        fi
+    done
+}
+
+# Create backup of existing file
+backup_file() {
+    local file="$1"
+    if [[ -f "$file" ]]; then
+        local backup_dir="$(dirname "$file")"
+        local backup_name="$(basename "$file").bak.$(date +%Y%m%d_%H%M%S)"
+        local backup_path="${backup_dir}/${backup_name}"
+
+        cp "$file" "$backup_path"
+        [[ "$VERBOSE" == true ]] && info "Created backup: $backup_path"
+
+        # Keep only the 5 most recent backups
+        local backup_count=$(find "$backup_dir" -name "$(basename "$file").bak.*" | wc -l | tr -d ' ')
+        if [[ $backup_count -gt 5 ]]; then
+            find "$backup_dir" -name "$(basename "$file").bak.*" -type f | \
+                sort | head -n -5 | xargs rm -f
+            [[ "$VERBOSE" == true ]] && info "Cleaned old backups (kept 5 most recent)"
+        fi
+    fi
+}
+
+# Sync to a specific tool
+sync_to_tool() {
+    local tool_name="$1"
+    local target_path="$2"
+    local target_dir="$(dirname "$target_path")"
+
+    # Create target directory if it doesn't exist
+    if [[ ! -d "$target_dir" ]]; then
+        if [[ "$DRY_RUN" == true ]]; then
+            info "[DRY RUN] Would create directory: $target_dir"
+        else
+            if mkdir -p "$target_dir" 2>/dev/null; then
+                [[ "$VERBOSE" == true ]] && info "Created directory: $target_dir"
+            else
+                error "Failed to create directory: $target_dir (permission denied)"
+                return 1
+            fi
+        fi
+    fi
+
+    # Check if target directory is writable
+    if [[ ! -w "$target_dir" ]] && [[ "$DRY_RUN" == false ]]; then
+        error "No write permission for: $target_dir"
+        warning "Try running: chmod u+w $target_dir"
+        return 1
+    fi
+
+    # Perform sync
+    if [[ "$DRY_RUN" == true ]]; then
+        info "[DRY RUN] Would sync to: $target_path"
+    else
+        # Backup existing file
+        if [[ "$NO_BACKUP" == false ]] && [[ -f "$target_path" ]]; then
+            backup_file "$target_path"
+        fi
+
+        # Copy file
+        if cp "$SOURCE_FILE" "$target_path" 2>/dev/null; then
+            success "Synced to ${tool_name}: $target_path"
+        else
+            error "Failed to sync to ${tool_name}: $target_path"
+            return 1
+        fi
+    fi
+
+    return 0
+}
+
+# Special handling for Cursor (SQLite database)
+handle_cursor() {
+    warning "Cursor uses SQLite database for global rules"
+    echo ""
+    echo "  Manual update required:"
+    echo "  1. Open Cursor"
+    echo "  2. Go to Settings (Cmd+, or Ctrl+,)"
+    echo "  3. Navigate to: General > Rules for AI"
+    echo "  4. Paste your rules from: $SOURCE_FILE"
+    echo ""
+    warning "For project-level rules, you can create .cursorrules in your project directory"
+}
+
+# Main sync function
+main() {
+    # Parse command line arguments
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --help|-h)
+                show_usage
+                exit 0
+                ;;
+            --version|-v)
+                show_version
+                exit 0
+                ;;
+            --list-tools)
+                list_tools
+                exit 0
+                ;;
+            --dry-run)
+                DRY_RUN=true
+                shift
+                ;;
+            --verbose)
+                VERBOSE=true
+                shift
+                ;;
+            --no-backup)
+                NO_BACKUP=true
+                shift
+                ;;
+            --tool)
+                if [[ -n "${2:-}" ]]; then
+                    SPECIFIC_TOOL="$2"
+                    shift 2
+                else
+                    error "Missing tool name after --tool"
+                    exit 1
+                fi
+                ;;
+            --source)
+                if [[ -n "${2:-}" ]]; then
+                    SOURCE_FILE="$2"
+                    shift 2
+                else
+                    error "Missing path after --source"
+                    exit 1
+                fi
+                ;;
+            *)
+                error "Unknown option: $1"
+                echo "Use --help for usage information"
+                exit 1
+                ;;
+        esac
+    done
+
+    # Check if source file exists
+    if [[ ! -f "$SOURCE_FILE" ]]; then
+        error "Source file not found: $SOURCE_FILE"
+        warning "Create an AGENTS.md file or specify a different source with --source"
+        exit 1
+    fi
+
+    [[ "$VERBOSE" == true ]] && info "Using source file: $SOURCE_FILE"
+
+    # Display header
+    echo ""
+    color_bold "Agent Rules Sync v${VERSION}"
+    echo ""
+
+    if [[ "$DRY_RUN" == true ]]; then
+        warning "DRY RUN MODE - No changes will be made"
+        echo ""
+    fi
+
+    # Sync to tools
+    local success_count=0
+    local failure_count=0
+    local skipped_count=0
+
+    if [[ -n "$SPECIFIC_TOOL" ]]; then
+        # Sync to specific tool only
+        local tool_path="$(get_tool_path "$SPECIFIC_TOOL")"
+        if [[ $? -eq 0 ]]; then
+            if sync_to_tool "$SPECIFIC_TOOL" "$tool_path"; then
+                ((success_count++))
+            else
+                ((failure_count++))
+            fi
+        else
+            error "Unknown tool: $SPECIFIC_TOOL"
+            echo ""
+            echo "Available tools:"
+            list_tools
+            exit 1
+        fi
+    else
+        # Sync to all tools
+        for tool in "${ALL_TOOLS[@]}"; do
+            local tool_path="$(get_tool_path "$tool")"
+            if sync_to_tool "$tool" "$tool_path"; then
+                ((success_count++))
+            else
+                ((failure_count++))
+            fi
+        done
+
+        # Handle Cursor separately
+        echo ""
+        handle_cursor
+        ((skipped_count++))
+    fi
+
+    # Display summary
+    echo ""
+    color_bold "Summary:"
+    echo "  $(color_green "Success: $success_count")"
+    [[ $failure_count -gt 0 ]] && echo "  $(color_red "Failed: $failure_count")"
+    [[ $skipped_count -gt 0 ]] && echo "  $(color_yellow "Skipped: $skipped_count (manual update required)")"
+    echo ""
+
+    [[ $failure_count -eq 0 ]] && exit 0 || exit 1
+}
+
+# Run main function
+main "$@"
