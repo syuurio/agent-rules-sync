@@ -203,22 +203,110 @@ add_to_path() {
     fi
 }
 
+# Interactive menu with arrow key navigation
+# Usage: interactive_menu "prompt" "option1" "option2" "option3" ...
+# Returns: selected index (0-based) in $MENU_RESULT
+interactive_menu() {
+    local prompt="$1"
+    shift
+    local options=("$@")
+    local selected=0
+    local total=${#options[@]}
+
+    # Hide cursor
+    tput civis 2>/dev/null || true
+
+    # Ensure cursor is restored on exit
+    trap 'tput cnorm 2>/dev/null || true' RETURN
+
+    echo "$prompt"
+    echo ""
+
+    # Function to print menu
+    print_menu() {
+        local redraw="${1:-}"
+
+        # Move cursor up to redraw menu
+        if [[ "$redraw" == "redraw" ]]; then
+            for ((i = 0; i < total; i++)); do
+                tput cuu1 2>/dev/null || printf '\033[1A'
+            done
+        fi
+
+        for ((i = 0; i < total; i++)); do
+            if [[ $i -eq $selected ]]; then
+                printf '  \033[0;32m❯ %s\033[0m\n' "${options[$i]}"
+            else
+                printf '    %s\n' "${options[$i]}"
+            fi
+        done
+    }
+
+    # Initial print
+    print_menu
+
+    # Read input
+    while true; do
+        # Read a single character
+        local key=""
+        IFS= read -rsn1 key || true
+
+        # Handle escape sequences (arrow keys)
+        if [[ "$key" == $'\x1b' ]]; then
+            local key2="" key3=""
+            read -rsn1 key2 || true
+            read -rsn1 key3 || true
+            local seq="${key2}${key3}"
+            case "$seq" in
+                '[A') # Up arrow
+                    selected=$((selected - 1))
+                    [[ $selected -lt 0 ]] && selected=$((total - 1))
+                    print_menu "redraw"
+                    ;;
+                '[B') # Down arrow
+                    selected=$((selected + 1))
+                    [[ $selected -ge $total ]] && selected=0
+                    print_menu "redraw"
+                    ;;
+            esac
+        elif [[ "$key" == "" ]]; then
+            # Enter pressed
+            echo ""
+            MENU_RESULT=$selected
+            return
+        fi
+    done
+}
+
 # Offer to run initial sync
 offer_initial_sync() {
     echo ""
     echo "Would you like to run an initial sync now?"
     echo "This will sync your AGENTS.md to all configured AI tools."
     echo ""
-    read -p "Run sync? [Y/n] " -n 1 -r
-    echo ""
 
-    if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
-        echo ""
-        "$SYMLINK_PATH" --verbose
-    else
-        info "Skipped initial sync"
-        info "You can run it later with: $SCRIPT_NAME"
-    fi
+    interactive_menu "Use ↑↓ arrows to select, Enter to confirm:" \
+        "Run sync (execute now)" \
+        "Dry-run (preview changes only)" \
+        "Skip"
+
+    case "$MENU_RESULT" in
+        0)
+            echo ""
+            info "Running sync..."
+            "$SYMLINK_PATH" --verbose
+            ;;
+        1)
+            echo ""
+            info "Running dry-run (no changes will be made)..."
+            "$SYMLINK_PATH" --dry-run --verbose
+            ;;
+        2)
+            info "Skipped initial sync"
+            info "You can run it later with: $SCRIPT_NAME"
+            info "Or preview with: $SCRIPT_NAME --dry-run"
+            ;;
+    esac
 }
 
 # Main installation flow
