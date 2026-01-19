@@ -9,7 +9,7 @@ When a user asks to uninstall Agent Rules Sync, follow these steps:
 ### Step 1: Remove the command symlink
 
 ```bash
-rm -f ~/.local/bin/sync-agent-rules
+rm -f ~/.local/bin/agent-rules-sync
 ```
 
 ### Step 2: Remove the installation directory
@@ -51,7 +51,7 @@ After uninstallation, inform the user:
 
 ```
 Agent Rules Sync has been uninstalled:
-✓ Removed command: ~/.local/bin/sync-agent-rules
+✓ Removed command: ~/.local/bin/agent-rules-sync
 ✓ Removed directory: ~/.agent-rules
 ℹ Your AI tool configurations (e.g., ~/.claude/CLAUDE.md) were preserved
 ```
@@ -73,7 +73,7 @@ If the uninstall script is not available:
 
 ```bash
 # Remove symlink
-rm -f ~/.local/bin/sync-agent-rules
+rm -f ~/.local/bin/agent-rules-sync
 
 # Remove installation directory (after backing up AGENTS.md if needed)
 rm -rf ~/.agent-rules

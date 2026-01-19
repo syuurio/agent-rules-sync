@@ -17,7 +17,7 @@ warning() { color_yellow "⚠ $*"; }
 info() { color_blue "ℹ $*"; }
 
 # Configuration
-SCRIPT_NAME="sync-agent-rules"
+SCRIPT_NAME="agent-rules-sync"
 SYMLINK_PATH="$HOME/.local/bin/$SCRIPT_NAME"
 INSTALL_DIR="$HOME/.agent-rules"
 

@@ -24,15 +24,15 @@ mkdir -p ~/.agent-rules/bin ~/.local/bin
 ### Step 2: Download the sync script
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/syuurio/agent-rules-sync/main/bin/sync-agent-rules \
-  -o ~/.agent-rules/bin/sync-agent-rules
-chmod +x ~/.agent-rules/bin/sync-agent-rules
+curl -fsSL https://raw.githubusercontent.com/syuurio/agent-rules-sync/main/bin/agent-rules-sync \
+  -o ~/.agent-rules/bin/agent-rules-sync
+chmod +x ~/.agent-rules/bin/agent-rules-sync
 ```
 
 ### Step 3: Create symlink
 
 ```bash
-ln -sf ~/.agent-rules/bin/sync-agent-rules ~/.local/bin/sync-agent-rules
+ln -sf ~/.agent-rules/bin/agent-rules-sync ~/.local/bin/agent-rules-sync
 ```
 
 ### Step 4: Verify PATH configuration
@@ -78,8 +78,8 @@ EOF
 ### Step 6: Verify installation
 
 ```bash
-~/.local/bin/sync-agent-rules --version
-~/.local/bin/sync-agent-rules --list-tools
+~/.local/bin/agent-rules-sync --version
+~/.local/bin/agent-rules-sync --list-tools
 ```
 
 ## Post-Installation
@@ -88,16 +88,16 @@ After installation, inform the user:
 
 ```
 Agent Rules Sync has been installed:
-✓ Script installed to: ~/.agent-rules/bin/sync-agent-rules
-✓ Command available at: ~/.local/bin/sync-agent-rules
-ℹ Run 'sync-agent-rules --help' to see available options
-ℹ Run 'sync-agent-rules --dry-run' to preview sync operations
+✓ Script installed to: ~/.agent-rules/bin/agent-rules-sync
+✓ Command available at: ~/.local/bin/agent-rules-sync
+ℹ Run 'agent-rules-sync --help' to see available options
+ℹ Run 'agent-rules-sync --dry-run' to preview sync operations
 ```
 
 Remind the user to:
 1. Restart their shell or run `source ~/.zshrc` (or `~/.bashrc`)
 2. Create/edit `~/.agent-rules/AGENTS.md` with their AI agent rules
-3. Run `sync-agent-rules` to sync rules to all AI tools
+3. Run `agent-rules-sync` to sync rules to all AI tools
 
 ## Alternative: Clone Repository
 
@@ -116,7 +116,7 @@ cd ~/.agent-rules
 Check internet connection and verify the URL is accessible:
 
 ```bash
-curl -I https://raw.githubusercontent.com/syuurio/agent-rules-sync/main/bin/sync-agent-rules
+curl -I https://raw.githubusercontent.com/syuurio/agent-rules-sync/main/bin/agent-rules-sync
 ```
 
 ### Permission denied
@@ -124,12 +124,12 @@ curl -I https://raw.githubusercontent.com/syuurio/agent-rules-sync/main/bin/sync
 Ensure the script has execute permissions:
 
 ```bash
-chmod +x ~/.agent-rules/bin/sync-agent-rules
-chmod +x ~/.local/bin/sync-agent-rules
+chmod +x ~/.agent-rules/bin/agent-rules-sync
+chmod +x ~/.local/bin/agent-rules-sync
 ```
 
 ### Command not found after installation
 
-1. Verify the symlink exists: `ls -la ~/.local/bin/sync-agent-rules`
+1. Verify the symlink exists: `ls -la ~/.local/bin/agent-rules-sync`
 2. Verify PATH includes `~/.local/bin`: `echo $PATH`
 3. Restart the shell or source the config file

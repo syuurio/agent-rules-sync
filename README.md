@@ -66,7 +66,7 @@ See [`docs/install.md`](docs/install.md) for detailed instructions for AI agents
 Sync your `AGENTS.md` to all configured AI tools:
 
 ```bash
-sync-agent-rules
+agent-rules-sync
 ```
 
 ### Preview Changes (Dry Run)
@@ -74,7 +74,7 @@ sync-agent-rules
 See what would be synced without making changes:
 
 ```bash
-sync-agent-rules --dry-run
+agent-rules-sync --dry-run
 ```
 
 ### Sync to Specific Tool
@@ -82,7 +82,7 @@ sync-agent-rules --dry-run
 Sync to only one tool:
 
 ```bash
-sync-agent-rules --tool claude
+agent-rules-sync --tool claude
 ```
 
 ### Verbose Output
@@ -90,7 +90,7 @@ sync-agent-rules --tool claude
 Show detailed information during sync:
 
 ```bash
-sync-agent-rules --verbose
+agent-rules-sync --verbose
 ```
 
 ### List Supported Tools
@@ -98,7 +98,7 @@ sync-agent-rules --verbose
 See all supported tools and their installation status:
 
 ```bash
-sync-agent-rules --list-tools
+agent-rules-sync --list-tools
 ```
 
 ### Use Custom Source File
@@ -106,7 +106,7 @@ sync-agent-rules --list-tools
 Sync from a different rules file:
 
 ```bash
-sync-agent-rules --source /path/to/custom-rules.md
+agent-rules-sync --source /path/to/custom-rules.md
 ```
 
 ### Skip Backups
@@ -114,7 +114,7 @@ sync-agent-rules --source /path/to/custom-rules.md
 Disable automatic backups (not recommended):
 
 ```bash
-sync-agent-rules --no-backup
+agent-rules-sync --no-backup
 ```
 
 ### Get Help
@@ -122,7 +122,7 @@ sync-agent-rules --no-backup
 View all available options:
 
 ```bash
-sync-agent-rules --help
+agent-rules-sync --help
 ```
 
 ## Your AGENTS.md File
@@ -155,7 +155,7 @@ The agent must detect and follow the project's existing lint, formatter, and sty
 
 To add support for a new AI tool:
 
-1. Edit `bin/sync-agent-rules`
+1. Edit `bin/agent-rules-sync`
 2. Add a new case to the `get_tool_path` function:
 
 ```bash
@@ -193,12 +193,12 @@ To uninstall Agent Rules Sync, run the interactive uninstall script:
 Or if you installed via direct download:
 
 ```bash
-rm ~/.local/bin/sync-agent-rules
+rm ~/.local/bin/agent-rules-sync
 rm -rf ~/.agent-rules
 ```
 
 The uninstallation script will:
-- Remove the command symlink (`~/.local/bin/sync-agent-rules`)
+- Remove the command symlink (`~/.local/bin/agent-rules-sync`)
 - Ask if you want to remove the installation directory (`~/.agent-rules`)
 - Ask if you want to clean up PATH configuration from shell config files
 
@@ -220,7 +220,7 @@ See [`docs/uninstall.md`](docs/uninstall.md) for detailed instructions for AI ag
 
 ### Command not found
 
-If `sync-agent-rules` command is not found after installation:
+If `agent-rules-sync` command is not found after installation:
 
 1. Check if `~/.local/bin` is in your PATH:
    ```bash
@@ -244,7 +244,7 @@ If `sync-agent-rules` command is not found after installation:
 If you get permission errors:
 
 ```bash
-chmod +x ~/.local/bin/sync-agent-rules
+chmod +x ~/.local/bin/agent-rules-sync
 ```
 
 ### Tool-Specific Issues

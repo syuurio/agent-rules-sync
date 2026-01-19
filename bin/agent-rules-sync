@@ -81,7 +81,7 @@ $(color_bold "Agent Rules Sync v${VERSION}")
 A unified configuration management tool for AI agent rules across multiple platforms.
 
 $(color_bold "USAGE:")
-    sync-agent-rules [OPTIONS]
+    agent-rules-sync [OPTIONS]
 
 $(color_bold "OPTIONS:")
     --help              Show this help message
@@ -94,10 +94,10 @@ $(color_bold "OPTIONS:")
     --no-backup         Skip backup before overwriting
 
 $(color_bold "EXAMPLES:")
-    sync-agent-rules                    # Sync to all tools
-    sync-agent-rules --dry-run          # Preview what will be synced
-    sync-agent-rules --tool claude      # Sync to Claude Code only
-    sync-agent-rules --verbose          # Show detailed sync process
+    agent-rules-sync                    # Sync to all tools
+    agent-rules-sync --dry-run          # Preview what will be synced
+    agent-rules-sync --tool claude      # Sync to Claude Code only
+    agent-rules-sync --verbose          # Show detailed sync process
 
 $(color_bold "SUPPORTED TOOLS:")
     $(list_tools | sed 's/^/    /')

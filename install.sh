@@ -22,7 +22,7 @@ info() { color_blue "ℹ $*"; }
 # Configuration
 GITHUB_REPO_BASE_URL="https://raw.githubusercontent.com/syuurio/agent-rules-sync/main"
 INSTALL_DIR="$HOME/.agent-rules"
-SCRIPT_NAME="sync-agent-rules"
+SCRIPT_NAME="agent-rules-sync"
 BIN_DIR="$HOME/.local/bin"
 SYMLINK_PATH="$BIN_DIR/$SCRIPT_NAME"
 
