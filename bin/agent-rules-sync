@@ -206,9 +206,9 @@ handle_cursor() {
     echo ""
     echo "  Manual update required:"
     echo "  1. Open Cursor"
-    echo "  2. Go to Settings (Cmd+, or Ctrl+,)"
-    echo "  3. Navigate to: General > Rules for AI"
-    echo "  4. Paste your rules from: $SOURCE_FILE"
+    echo "  2. Open Cursor Settings (Cmd+Shift+J or Ctrl+Shift+J)"
+    echo "  3. Navigate to: Rules and Commands > User Rules"
+    echo "  4. Click 'Add Rule' and paste your rules from: $SOURCE_FILE"
     echo ""
     warning "For project-level rules, you can create .cursorrules in your project directory"
 }
