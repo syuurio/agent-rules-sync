@@ -21,15 +21,6 @@ SCRIPT_NAME="sync-agent-rules"
 SYMLINK_PATH="$HOME/.local/bin/$SCRIPT_NAME"
 INSTALL_DIR="$HOME/.agent-rules"
 
-# Tool configuration paths (same as in sync script)
-TOOL_PATHS=(
-    "$HOME/.claude/CLAUDE.md"
-    "$HOME/.codeium/windsurf/memories/global_rules.md"
-    "$HOME/.gemini/GEMINI.md"
-    "$HOME/.gemini/antigravity/AGENTS.md"
-    "$HOME/.codex/AGENTS.md"
-)
-
 # Display header
 echo ""
 color_bold "Agent Rules Sync - Uninstallation"
@@ -37,63 +28,35 @@ echo ""
 
 # Remove symlink
 remove_symlink() {
+    echo ""
+    color_bold "[Step 1/3] Remove command symlink"
+
     if [[ -L "$SYMLINK_PATH" ]]; then
         rm "$SYMLINK_PATH"
         success "Removed symlink: $SYMLINK_PATH"
-        return 0
     elif [[ -f "$SYMLINK_PATH" ]]; then
         warning "File exists but is not a symlink: $SYMLINK_PATH"
-        echo "Would you like to remove it anyway? [y/N]"
-        read -p "> " -n 1 -r
+        read -p "Would you like to remove it anyway? [y/N] " -n 1 -r
         echo ""
         if [[ $REPLY =~ ^[Yy]$ ]]; then
             rm "$SYMLINK_PATH"
             success "Removed file: $SYMLINK_PATH"
-        fi
-        return 0
-    else
-        info "Symlink not found (already removed?)"
-        return 1
-    fi
-}
-
-# Remove synced files
-remove_synced_files() {
-    echo ""
-    echo "Would you like to remove synced configuration files from AI tools?"
-    warning "This will delete files like ~/.claude/CLAUDE.md, ~/.gemini/GEMINI.md, etc."
-    echo ""
-    read -p "Remove synced files? [y/N] " -n 1 -r
-    echo ""
-
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-        local removed_count=0
-        for config_path in "${TOOL_PATHS[@]}"; do
-            if [[ -f "$config_path" ]]; then
-                rm "$config_path"
-                success "Removed: $config_path"
-                ((removed_count++))
-            fi
-        done
-
-        if [[ $removed_count -eq 0 ]]; then
-            info "No synced files found"
         else
-            success "Removed $removed_count synced file(s)"
+            info "Kept file: $SYMLINK_PATH"
         fi
     else
-        info "Kept synced files"
+        info "Already removed: $SYMLINK_PATH"
     fi
 }
 
 # Remove installation directory
 remove_install_dir() {
+    echo ""
+    color_bold "[Step 2/3] Remove installation directory"
+
     if [[ -d "$INSTALL_DIR" ]]; then
-        echo ""
-        echo "Would you like to remove the installation directory?"
         info "Directory: $INSTALL_DIR"
         warning "This will delete the sync script and any templates"
-        echo ""
         read -p "Remove directory? [y/N] " -n 1 -r
         echo ""
 
@@ -104,12 +67,15 @@ remove_install_dir() {
             info "Kept directory: $INSTALL_DIR"
         fi
     else
-        info "Installation directory not found (already removed?)"
+        info "Already removed: $INSTALL_DIR"
     fi
 }
 
 # Remove PATH configuration
 remove_path_config() {
+    echo ""
+    color_bold "[Step 3/3] Remove PATH configuration"
+
     # Detect shell config files
     local shell_configs=()
     [[ -f "$HOME/.zshrc" ]] && shell_configs+=("$HOME/.zshrc")
@@ -120,10 +86,8 @@ remove_path_config() {
     for config_file in "${shell_configs[@]}"; do
         if grep -q "Added by agent-rules-sync installer" "$config_file" 2>/dev/null; then
             found_config=true
-            echo ""
-            echo "Found PATH configuration in: $config_file"
-            echo "Would you like to remove it? [y/N]"
-            read -p "> " -n 1 -r
+            info "Found in: $config_file"
+            read -p "Remove PATH configuration? [y/N] " -n 1 -r
             echo ""
 
             if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -147,7 +111,7 @@ remove_path_config() {
     done
 
     if [[ "$found_config" == false ]]; then
-        info "No PATH configuration found in shell configs"
+        info "No PATH configuration found (nothing to remove)"
     fi
 }
 
@@ -158,21 +122,20 @@ show_summary() {
     echo ""
 
     # Check what's left
-    [[ -L "$SYMLINK_PATH" ]] || [[ -f "$SYMLINK_PATH" ]] && warning "Command still exists: $SYMLINK_PATH" || success "Command removed"
-    [[ -d "$INSTALL_DIR" ]] && warning "Directory still exists: $INSTALL_DIR" || success "Directory removed"
-
-    local remaining_files=0
-    for config_path in "${TOOL_PATHS[@]}"; do
-        [[ -f "$config_path" ]] && ((remaining_files++))
-    done
-
-    if [[ $remaining_files -gt 0 ]]; then
-        warning "$remaining_files synced configuration file(s) still exist"
+    if [[ -L "$SYMLINK_PATH" ]] || [[ -f "$SYMLINK_PATH" ]]; then
+        warning "Command still exists: $SYMLINK_PATH"
     else
-        success "All synced configuration files removed"
+        success "Command removed"
+    fi
+
+    if [[ -d "$INSTALL_DIR" ]]; then
+        warning "Directory still exists: $INSTALL_DIR"
+    else
+        success "Directory removed"
     fi
 
     echo ""
+    info "Synced configuration files (e.g., ~/.claude/CLAUDE.md) were preserved"
     info "Uninstallation complete"
     echo ""
 }
@@ -182,7 +145,6 @@ main() {
     info "Starting uninstallation process..."
 
     remove_symlink
-    remove_synced_files
     remove_install_dir
     remove_path_config
 
