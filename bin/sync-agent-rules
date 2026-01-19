@@ -124,10 +124,15 @@ backup_file() {
         [[ "$VERBOSE" == true ]] && info "Created backup: $backup_path"
 
         # Keep only the 5 most recent backups
-        local backup_count=$(find "$backup_dir" -name "$(basename "$file").bak.*" | wc -l | tr -d ' ')
+        # NOTE: Using portable method instead of `head -n -5` because macOS BSD head
+        # does not support negative line counts. We calculate the number of files to
+        # delete (total - 5) and use `head -n $count` which works on both macOS and Linux.
+        local backup_pattern="$(basename "$file").bak.*"
+        local backup_count=$(find "$backup_dir" -name "$backup_pattern" -type f 2>/dev/null | wc -l | tr -d ' ')
         if [[ $backup_count -gt 5 ]]; then
-            find "$backup_dir" -name "$(basename "$file").bak.*" -type f | \
-                sort | head -n -5 | xargs rm -f
+            local backups_to_delete=$((backup_count - 5))
+            find "$backup_dir" -name "$backup_pattern" -type f 2>/dev/null | \
+                sort | head -n "$backups_to_delete" | xargs rm -f 2>/dev/null || true
             [[ "$VERBOSE" == true ]] && info "Cleaned old backups (kept 5 most recent)"
         fi
     fi
