@@ -280,8 +280,11 @@ main() {
 
     if [[ -n "$SPECIFIC_TOOL" ]]; then
         # Sync to specific tool only
-        local tool_path="$(get_tool_path "$SPECIFIC_TOOL")"
-        if [[ $? -eq 0 ]]; then
+        # NOTE: Using if-statement with command substitution instead of checking $? after
+        # local assignment. The `local` builtin always returns 0 for the assignment itself,
+        # which masks the actual return value of the subshell command.
+        local tool_path
+        if tool_path="$(get_tool_path "$SPECIFIC_TOOL")"; then
             if sync_to_tool "$SPECIFIC_TOOL" "$tool_path"; then
                 ((success_count++))
             else
