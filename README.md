@@ -29,43 +29,31 @@ Managing AI agent rules across different tools can be tedious. Each tool has its
 
 ## Installation
 
-### Method 1: Quick Install from GitHub (Recommended)
+### For Humans
+
+Run the interactive install script:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/syuurio/agent-rules-sync/main/install.sh | bash
 ```
 
-This method:
-- Downloads the script automatically
-- Creates a command you can run from anywhere
-- Optionally adds the command to your PATH
+This will:
+- Download and install the sync script
+- Create a command you can run from anywhere
+- Optionally add the command to your PATH
+- Offer an interactive menu to run initial sync (with dry-run option)
 
-### Method 2: Clone Repository
+### For LLM Agents
 
-```bash
-git clone https://github.com/syuurio/agent-rules-sync.git ~/.agent-rules
-cd ~/.agent-rules
-./install.sh
-```
+You can ask your AI assistant (Claude, Cursor, Windsurf, etc.) to help you install:
 
-This method is recommended for:
-- Developers who want to contribute
-- Users who want to track updates with git
-- Those who prefer having the full repository
+> "Help me install agent-rules-sync, refer to `https://raw.githubusercontent.com/syuurio/agent-rules-sync/main/docs/install.md` for instructions"
 
-### Method 3: Manual Install
+Or if you already have the repository cloned:
 
-```bash
-mkdir -p ~/.local/bin
-curl -fsSL https://raw.githubusercontent.com/syuurio/agent-rules-sync/main/bin/sync-agent-rules \
-  -o ~/.local/bin/sync-agent-rules
-chmod +x ~/.local/bin/sync-agent-rules
-```
+> "Help me install agent-rules-sync, refer to `~/.agent-rules/docs/install.md` for instructions"
 
-This method:
-- Gives you direct control over installation
-- Doesn't require cloning the full repository
-- Ideal for minimal installations
+See [`docs/install.md`](docs/install.md) for detailed instructions for AI agents.
 
 ## Usage
 
@@ -190,7 +178,9 @@ ALL_TOOLS=("claude" "windsurf" "gemini" "antigravity" "codex" "your-new-tool")
 
 ## Uninstallation
 
-To uninstall Agent Rules Sync:
+### For Humans
+
+To uninstall Agent Rules Sync, run the interactive uninstall script:
 
 ```bash
 ~/.agent-rules/uninstall.sh
@@ -203,10 +193,22 @@ rm ~/.local/bin/sync-agent-rules
 rm -rf ~/.agent-rules
 ```
 
-The uninstallation script will ask if you want to:
-- Remove synced configuration files from AI tools
-- Remove the installation directory
-- Clean up PATH configuration from shell config files
+The uninstallation script will:
+- Remove the command symlink (`~/.local/bin/sync-agent-rules`)
+- Ask if you want to remove the installation directory (`~/.agent-rules`)
+- Ask if you want to clean up PATH configuration from shell config files
+
+**Note**: Synced configuration files (e.g., `~/.claude/CLAUDE.md`) are preserved and will not be removed.
+
+### For LLM Agents
+
+You can ask your AI assistant (Claude, Cursor, Windsurf, etc.) to help you uninstall:
+
+> "Help me uninstall agent-rules-sync, refer to `~/.agent-rules/docs/uninstall.md` for instructions"
+
+The AI will follow the documented steps to safely uninstall the tool while preserving your AI configurations.
+
+See [`docs/uninstall.md`](docs/uninstall.md) for detailed instructions for AI agents.
 
 ## Troubleshooting
 
