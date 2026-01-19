@@ -127,8 +127,17 @@ remove_path_config() {
             echo ""
 
             if [[ $REPLY =~ ^[Yy]$ ]]; then
-                # Remove the line and the comment before it
-                sed -i.bak '/# Added by agent-rules-sync installer/,+1d' "$config_file"
+                # Remove the comment line and the export line after it.
+                # NOTE: Using portable sed approach because:
+                # 1. macOS BSD sed requires `-i ''` while GNU sed uses `-i.bak`
+                # 2. BSD sed does not support `,+1d` address range syntax
+                # We use {N;d;} to read next line and delete both lines together.
+                cp "$config_file" "${config_file}.bak"
+                if [[ "$(uname)" == "Darwin" ]]; then
+                    sed -i '' '/# Added by agent-rules-sync installer/{N;d;}' "$config_file"
+                else
+                    sed -i '/# Added by agent-rules-sync installer/{N;d;}' "$config_file"
+                fi
                 success "Removed PATH configuration from: $config_file"
                 info "Backup saved as: ${config_file}.bak"
             else
