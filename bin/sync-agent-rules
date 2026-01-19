@@ -300,10 +300,18 @@ main() {
     else
         # Sync to all tools
         for tool in "${ALL_TOOLS[@]}"; do
-            local tool_path="$(get_tool_path "$tool")"
-            if sync_to_tool "$tool" "$tool_path"; then
-                ((success_count++))
+            # NOTE: Same pattern as above - separate declaration from assignment to
+            # properly capture the return value of get_tool_path. This guards against
+            # invalid tool names in ALL_TOOLS array and makes the code more defensive.
+            local tool_path
+            if tool_path="$(get_tool_path "$tool")"; then
+                if sync_to_tool "$tool" "$tool_path"; then
+                    ((success_count++))
+                else
+                    ((failure_count++))
+                fi
             else
+                warning "Skipping unknown tool: $tool"
                 ((failure_count++))
             fi
         done
