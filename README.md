@@ -47,11 +47,15 @@ This will:
 
 You can ask your AI assistant (Claude, Cursor, Windsurf, etc.) to help you install:
 
-> "Help me install agent-rules-sync, refer to `https://raw.githubusercontent.com/syuurio/agent-rules-sync/main/docs/install.md` for instructions"
+```
+"Help me install agent-rules-sync, refer to `https://raw.githubusercontent.com/syuurio/agent-rules-sync/main/docs/install.md` for instructions"
+```
 
 Or if you already have the repository cloned:
 
-> "Help me install agent-rules-sync, refer to `~/.agent-rules/docs/install.md` for instructions"
+```
+"Help me install agent-rules-sync, refer to `~/.agent-rules/docs/install.md` for instructions"
+```
 
 See [`docs/install.md`](docs/install.md) for detailed instructions for AI agents.
 
@@ -204,7 +208,9 @@ The uninstallation script will:
 
 You can ask your AI assistant (Claude, Cursor, Windsurf, etc.) to help you uninstall:
 
-> "Help me uninstall agent-rules-sync, refer to `~/.agent-rules/docs/uninstall.md` for instructions"
+```
+"Help me uninstall agent-rules-sync, refer to `~/.agent-rules/docs/uninstall.md` for instructions"
+```
 
 The AI will follow the documented steps to safely uninstall the tool while preserving your AI configurations.
 
