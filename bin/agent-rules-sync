@@ -671,6 +671,51 @@ handle_cursor() {
     warning "For project-level rules, you can create .cursorrules in your project directory"
 }
 
+# Sync to all tools without interactive menu (original behavior)
+run_sync_all() {
+    echo ""
+    color_bold "Agent Rules Sync v${VERSION}"
+    echo ""
+
+    if [[ "$DRY_RUN" == true ]]; then
+        warning "DRY RUN MODE - No changes will be made"
+        echo ""
+    fi
+
+    local success_count=0
+    local failure_count=0
+    local skipped_count=0
+
+    for tool in "${ALL_TOOLS[@]}"; do
+        local tool_path
+        if tool_path="$(get_tool_path "$tool")"; then
+            if sync_to_tool "$tool" "$tool_path"; then
+                ((success_count++))
+            else
+                ((failure_count++))
+            fi
+        else
+            warning "Skipping unknown tool: $tool"
+            ((failure_count++))
+        fi
+    done
+
+    # Handle Cursor separately
+    echo ""
+    handle_cursor
+    ((skipped_count++))
+
+    # Display summary
+    echo ""
+    color_bold "Summary:"
+    echo "  $(color_green "Success: $success_count")"
+    [[ $failure_count -gt 0 ]] && echo "  $(color_red "Failed: $failure_count")"
+    [[ $skipped_count -gt 0 ]] && echo "  $(color_yellow "Skipped: $skipped_count (manual update required)")"
+    echo ""
+
+    [[ $failure_count -eq 0 ]] && exit 0 || exit 1
+}
+
 # Interactive sync flow - let user select tools to sync
 run_interactive_sync() {
     echo ""
@@ -829,32 +874,31 @@ main() {
 
     [[ "$VERBOSE" == true ]] && info "Using source file: $SOURCE_FILE"
 
-    # Display header
-    echo ""
-    color_bold "Agent Rules Sync v${VERSION}"
-    echo ""
-
-    if [[ "$DRY_RUN" == true ]]; then
-        warning "DRY RUN MODE - No changes will be made"
-        echo ""
-    fi
-
-    # Sync to tools
-    local success_count=0
-    local failure_count=0
-    local skipped_count=0
-
+    # If specific tool is provided, sync only that tool (non-interactive)
     if [[ -n "$SPECIFIC_TOOL" ]]; then
-        # Sync to specific tool only
-        # NOTE: Using if-statement with command substitution instead of checking $? after
-        # local assignment. The `local` builtin always returns 0 for the assignment itself,
-        # which masks the actual return value of the subshell command.
+        echo ""
+        color_bold "Agent Rules Sync v${VERSION}"
+        echo ""
+
+        if [[ "$DRY_RUN" == true ]]; then
+            warning "DRY RUN MODE - No changes will be made"
+            echo ""
+        fi
+
         local tool_path
         if tool_path="$(get_tool_path "$SPECIFIC_TOOL")"; then
             if sync_to_tool "$SPECIFIC_TOOL" "$tool_path"; then
-                ((success_count++))
+                echo ""
+                color_bold "Summary:"
+                echo "  $(color_green "Success: 1")"
+                echo ""
+                exit 0
             else
-                ((failure_count++))
+                echo ""
+                color_bold "Summary:"
+                echo "  $(color_red "Failed: 1")"
+                echo ""
+                exit 1
             fi
         else
             error "Unknown tool: $SPECIFIC_TOOL"
@@ -863,40 +907,16 @@ main() {
             list_tools
             exit 1
         fi
-    else
-        # Sync to all tools
-        for tool in "${ALL_TOOLS[@]}"; do
-            # NOTE: Same pattern as above - separate declaration from assignment to
-            # properly capture the return value of get_tool_path. This guards against
-            # invalid tool names in ALL_TOOLS array and makes the code more defensive.
-            local tool_path
-            if tool_path="$(get_tool_path "$tool")"; then
-                if sync_to_tool "$tool" "$tool_path"; then
-                    ((success_count++))
-                else
-                    ((failure_count++))
-                fi
-            else
-                warning "Skipping unknown tool: $tool"
-                ((failure_count++))
-            fi
-        done
-
-        # Handle Cursor separately
-        echo ""
-        handle_cursor
-        ((skipped_count++))
     fi
 
-    # Display summary
-    echo ""
-    color_bold "Summary:"
-    echo "  $(color_green "Success: $success_count")"
-    [[ $failure_count -gt 0 ]] && echo "  $(color_red "Failed: $failure_count")"
-    [[ $skipped_count -gt 0 ]] && echo "  $(color_yellow "Skipped: $skipped_count (manual update required)")"
-    echo ""
+    # If --all flag is provided, sync all tools without interactive menu
+    if [[ "$SYNC_ALL" == true ]]; then
+        run_sync_all
+        exit 0
+    fi
 
-    [[ $failure_count -eq 0 ]] && exit 0 || exit 1
+    # Default: Interactive mode
+    run_interactive_sync
 }
 
 # Run main function
