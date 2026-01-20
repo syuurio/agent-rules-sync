@@ -28,6 +28,31 @@ Managing AI agent rules across different tools can be tedious. Each tool has its
 | Codex | ✓ Supported | `~/.codex/AGENTS.md` |
 | Cursor | ⚠️ Partial | Manual update via UI (SQLite database) |
 
+## Roadmap
+
+We're continuously improving Agent Rules Sync. Here's what's coming next:
+
+### 📋 Planned Features
+
+#### Interactive Sync Menu (Priority: High)
+**Status**: Planning
+
+Add an interactive menu for selecting which tools to sync, improving the user experience:
+
+- **Arrow key navigation** - Navigate through available tools with ↑↓ keys
+- **Multi-select support** - Toggle multiple tools with spacebar
+- **Visual feedback** - See which tools are currently selected
+- **Confirm & execute** - Review selections before syncing
+- **Quick cancel** - Exit with ESC or Ctrl+C
+
+This enhancement will make it easier to selectively sync rules to specific tools without remembering command-line flags.
+
+**Related**: See [`docs/todos.md`](docs/todos.md) for detailed task tracking
+
+### 💡 Future Ideas
+
+Have ideas for new features? We'd love to hear them! Check out our [discussions](https://github.com/syuurio/agent-rules-sync/discussions) or [open an issue](https://github.com/syuurio/agent-rules-sync/issues).
+
 ## Installation
 
 ### For Humans
