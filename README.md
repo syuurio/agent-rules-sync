@@ -11,6 +11,7 @@ Managing AI agent rules across different tools can be tedious. Each tool has its
 - 🔄 **One-Command Sync** - Sync rules to multiple AI tools instantly
 - 🛠️ **Easy to Extend** - Add new tools by editing a simple configuration
 - 💾 **Automatic Backups** - Your existing configurations are backed up before changes
+- ⏪ **Restore from Backup** - Interactive restore with arrow-key navigation
 - 🎨 **User-Friendly CLI** - Color-coded output and clear status messages
 - 📦 **Simple Installation** - Install via curl or git clone
 - 🔍 **Dry-Run Mode** - Preview changes before applying them
@@ -115,6 +116,40 @@ Disable automatic backups (not recommended):
 
 ```bash
 agent-rules-sync --no-backup
+```
+
+### Restore from Backup
+
+Restore your AI tool configurations from a previous backup using an interactive menu:
+
+```bash
+agent-rules-sync --restore
+```
+
+This will:
+1. Show a multi-select menu to choose which tools to restore (use ↑↓ to move, Space to toggle, `a` for all, Enter to confirm)
+2. For each selected tool, show available backups sorted by date
+3. Backup your current config before restoring (safety measure)
+4. Restore the selected backup
+
+To restore a specific tool directly:
+
+```bash
+agent-rules-sync --restore --tool claude
+```
+
+### List Available Backups
+
+See backup status for all tools:
+
+```bash
+agent-rules-sync --list-backups
+```
+
+With verbose output to see individual backup files:
+
+```bash
+agent-rules-sync --list-backups --verbose
 ```
 
 ### Get Help
@@ -275,7 +310,7 @@ Contributions are welcome! Here's how you can help:
 git clone https://github.com/syuurio/agent-rules-sync.git
 cd agent-rules-sync
 # Make your changes
-./install.sh  # Test your changes
+./scripts/install.sh  # Test your changes
 ```
 
 ## Acknowledgments

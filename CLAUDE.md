@@ -9,12 +9,17 @@ Agent Rules Sync is a CLI tool that synchronizes AI agent configuration rules fr
 ## Commands
 
 ```bash
-# Run the sync tool directly
+# Sync rules to AI tools
 ./bin/agent-rules-sync              # Sync to all tools
 ./bin/agent-rules-sync --dry-run    # Preview without changes
 ./bin/agent-rules-sync --tool claude # Sync to specific tool
 ./bin/agent-rules-sync --verbose    # Detailed output
 ./bin/agent-rules-sync --list-tools # Show tool status
+
+# Restore from backups (interactive)
+./bin/agent-rules-sync --restore           # Multi-select tools, then select backup
+./bin/agent-rules-sync --restore --tool claude  # Restore specific tool
+./bin/agent-rules-sync --list-backups      # Show backup status for all tools
 
 # Installation/uninstallation
 ./scripts/install.sh                # Install (creates symlink to ~/.local/bin/)
@@ -26,11 +31,20 @@ No build, lint, or test commands - this is a pure Bash project.
 ## Architecture
 
 ```
-bin/agent-rules-sync     # Main CLI script (~350 lines)
+bin/agent-rules-sync     # Main CLI script (~760 lines)
 ├── resolve_script_dir() # Handles symlink resolution for correct path finding
 ├── get_tool_path()      # Maps tool names → config file paths
-├── backup_file()        # Creates timestamped backups (keeps 5 most recent)
+├── backup_file()        # Creates timestamped backups (keeps BACKUP_RETENTION_COUNT most recent)
 ├── sync_to_tool()       # Performs file copy with directory creation
+├── Interactive Menus
+│   ├── _menu_*()        # Shared helpers (cursor control, key reading)
+│   ├── interactive_menu()    # Single-select with arrow keys
+│   └── multi_select_menu()   # Multi-select with Space toggle
+├── Restore Functions
+│   ├── list_backups_for_tool()  # List backup files for a tool
+│   ├── restore_backup()         # Restore a backup file
+│   ├── restore_tool()           # Interactive backup selection for one tool
+│   └── run_restore()            # Main restore flow with tool selection
 └── main()               # Argument parsing and orchestration
 
 scripts/
