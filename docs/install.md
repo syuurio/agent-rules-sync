@@ -106,7 +106,7 @@ For users who want to contribute or track updates with git:
 ```bash
 git clone https://github.com/syuurio/agent-rules-sync.git ~/.agent-rules
 cd ~/.agent-rules
-./install.sh
+./scripts/install.sh
 ```
 
 ## Troubleshooting

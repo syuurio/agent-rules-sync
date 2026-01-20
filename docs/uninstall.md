@@ -64,7 +64,7 @@ If only the symlink was removed but the directory still exists:
 
 ```bash
 # Re-run the uninstall script
-~/.agent-rules/uninstall.sh
+~/.agent-rules/scripts/uninstall.sh
 ```
 
 ### Manual cleanup

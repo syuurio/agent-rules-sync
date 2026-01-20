@@ -34,7 +34,7 @@ Managing AI agent rules across different tools can be tedious. Each tool has its
 Run the interactive install script:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/syuurio/agent-rules-sync/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/syuurio/agent-rules-sync/main/scripts/install.sh | bash
 ```
 
 This will:
@@ -187,7 +187,7 @@ ALL_TOOLS=("claude" "windsurf" "gemini" "antigravity" "codex" "your-new-tool")
 To uninstall Agent Rules Sync, run the interactive uninstall script:
 
 ```bash
-~/.agent-rules/uninstall.sh
+~/.agent-rules/scripts/uninstall.sh
 ```
 
 Or if you installed via direct download:

@@ -60,7 +60,9 @@ check_requirements() {
 
 # Detect installation mode
 detect_mode() {
-    if [[ -f "bin/$SCRIPT_NAME" ]] && [[ -f "AGENTS.md" ]]; then
+    local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    local repo_root="$(dirname "$script_dir")"
+    if [[ -f "$repo_root/bin/$SCRIPT_NAME" ]] && [[ -f "$repo_root/AGENTS.md" ]]; then
         echo "repo"
     else
         echo "direct"
@@ -100,7 +102,8 @@ install_from_repo() {
     info "Installing from cloned repository..."
 
     SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    SCRIPT_PATH="$SCRIPT_DIR/bin/$SCRIPT_NAME"
+    REPO_ROOT="$(dirname "$SCRIPT_DIR")"
+    SCRIPT_PATH="$REPO_ROOT/bin/$SCRIPT_NAME"
 
     if [[ ! -f "$SCRIPT_PATH" ]]; then
         error "Script not found: $SCRIPT_PATH"
