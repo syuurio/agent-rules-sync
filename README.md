@@ -32,12 +32,12 @@ Managing AI agent rules across different tools can be tedious. Each tool has its
 
 We're continuously improving Agent Rules Sync. Here's what's coming next:
 
-### 📋 Planned Features
+### ✅ Recently Completed
 
-#### Interactive Sync Menu (Priority: High)
-**Status**: Planning
+#### Interactive Sync Menu
+**Status**: Completed
 
-Add an interactive menu for selecting which tools to sync, improving the user experience:
+The default sync command now shows an interactive menu for selecting which tools to sync:
 
 - **Arrow key navigation** - Navigate through available tools with ↑↓ keys
 - **Multi-select support** - Toggle multiple tools with spacebar
@@ -45,9 +45,7 @@ Add an interactive menu for selecting which tools to sync, improving the user ex
 - **Confirm & execute** - Review selections before syncing
 - **Quick cancel** - Exit with ESC or Ctrl+C
 
-This enhancement will make it easier to selectively sync rules to specific tools without remembering command-line flags.
-
-**Related**: See [`docs/todos.md`](docs/todos.md) for detailed task tracking
+Use `agent-rules-sync --all` to sync all tools without the interactive menu.
 
 ### 💡 Future Ideas
 
@@ -89,10 +87,25 @@ See [`docs/install.md`](docs/install.md) for detailed instructions for AI agents
 
 ### Basic Usage
 
-Sync your `AGENTS.md` to all configured AI tools:
+Sync your `AGENTS.md` to selected AI tools using interactive menu:
 
 ```bash
 agent-rules-sync
+```
+
+This will show an interactive menu where you can:
+- Use ↑↓ to move between tools
+- Press Space to toggle selection
+- Press `a` to select all, `d` to deselect all
+- Press Enter to confirm and sync
+- Press Esc or Ctrl+C to cancel
+
+### Sync All Tools
+
+Sync to all tools without interactive menu:
+
+```bash
+agent-rules-sync --all
 ```
 
 ### Preview Changes (Dry Run)

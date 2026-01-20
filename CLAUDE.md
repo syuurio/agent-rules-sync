@@ -10,8 +10,9 @@ Agent Rules Sync is a CLI tool that synchronizes AI agent configuration rules fr
 
 ```bash
 # Sync rules to AI tools
-./bin/agent-rules-sync              # Sync to all tools
-./bin/agent-rules-sync --dry-run    # Preview without changes
+./bin/agent-rules-sync              # Interactive: select tools to sync
+./bin/agent-rules-sync --all        # Sync to all tools (non-interactive)
+./bin/agent-rules-sync --dry-run    # Preview with interactive selection
 ./bin/agent-rules-sync --tool claude # Sync to specific tool
 ./bin/agent-rules-sync --verbose    # Detailed output
 ./bin/agent-rules-sync --list-tools # Show tool status
@@ -45,6 +46,9 @@ bin/agent-rules-sync     # Main CLI script (~760 lines)
 │   ├── restore_backup()         # Restore a backup file
 │   ├── restore_tool()           # Interactive backup selection for one tool
 │   └── run_restore()            # Main restore flow with tool selection
+├── Sync Functions
+│   ├── run_sync_all()           # Sync all tools (--all flag)
+│   └── run_interactive_sync()   # Interactive tool selection (default)
 └── main()               # Argument parsing and orchestration
 
 scripts/
