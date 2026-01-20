@@ -27,34 +27,37 @@ Each task contains the following structured information:
 
 ## 📌 Todo (TODO)
 
-### [TASK-001] Add interactive menu to sync agent rules
-
-- **Status**: `TODO`
-- **Priority**: `P1 (High)`
-- **Tags**: `#enhancement` `#cli` `#ux`
-
-#### 📝 Description
-Add interactive menu functionality to the `agent-rules-sync` CLI tool, allowing users to select tools to sync through a friendly interface (supporting single or multiple selection).
-
-#### ✅ Acceptance Criteria
-- [ ] Users can select a single tool using arrow keys
-- [ ] Users can toggle multiple tool selections using the spacebar
-- [ ] Menu displays currently selected tools
-- [ ] Sync operation executes after confirming selection
-- [ ] Users can cancel operation by pressing ESC or Ctrl+C
-
-#### 📁 Related Files
-- `bin/agent-rules-sync`
-
-#### 💡 Notes
-- Need to ensure Bash version compatibility
-- Consider cross-platform terminal control code support
+> No pending tasks
 
 ---
 
 ## ✅ Done (DONE)
 
 > Completed task records
+
+### [TASK-001] Add interactive menu to sync agent rules
+
+- **Status**: `DONE`
+- **Priority**: `P1 (High)`
+- **Tags**: `#enhancement` `#cli` `#ux`
+- **Completed**: 2026-01-20
+
+#### 📝 Description
+Add interactive menu functionality to the `agent-rules-sync` CLI tool, allowing users to select tools to sync through a friendly interface (supporting single or multiple selection).
+
+#### ✅ Acceptance Criteria
+- [x] Users can select a single tool using arrow keys
+- [x] Users can toggle multiple tool selections using the spacebar
+- [x] Menu displays currently selected tools
+- [x] Sync operation executes after confirming selection
+- [x] Users can cancel operation by pressing ESC or Ctrl+C
+
+#### 📁 Related Files
+- `bin/agent-rules-sync`
+
+#### 💡 Notes
+- Default behavior changed from sync-all to interactive
+- Added `--all` flag to preserve original behavior
 
 ---
 
