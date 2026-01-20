@@ -81,6 +81,7 @@ NO_BACKUP=false
 SPECIFIC_TOOL=""
 RESTORE_MODE=false
 LIST_BACKUPS_MODE=false
+SYNC_ALL=false  # Skip interactive menu and sync all tools
 
 # Display usage information
 show_usage() {
@@ -693,6 +694,10 @@ main() {
                 ;;
             --restore)
                 RESTORE_MODE=true
+                shift
+                ;;
+            --all)
+                SYNC_ALL=true
                 shift
                 ;;
             --dry-run)
