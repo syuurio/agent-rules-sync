@@ -194,11 +194,8 @@ _menu_read_key() {
     local key=""
     MENU_KEY_RESULT=""
 
-    # Read with timeout to allow interrupt handling
-    if ! IFS= read -rsn1 -t 0.1 key 2>/dev/null; then
-        # Timeout or error - check if we should continue
-        return 0
-    fi
+    # Read a single character (blocking)
+    IFS= read -rsn1 key || true
 
     # Handle Ctrl+C (ASCII 3)
     if [[ "$key" == $'\x03' ]]; then
@@ -209,8 +206,8 @@ _menu_read_key() {
     # Handle escape sequences (arrow keys)
     if [[ "$key" == $'\x1b' ]]; then
         local key2="" key3=""
-        read -rsn1 -t 0.1 key2 2>/dev/null || true
-        read -rsn1 -t 0.1 key3 2>/dev/null || true
+        read -rsn1 key2 || true
+        read -rsn1 key3 || true
         case "${key2}${key3}" in
             '[A') MENU_KEY_RESULT="up" ;;
             '[B') MENU_KEY_RESULT="down" ;;
