@@ -98,6 +98,7 @@ $(color_bold "OPTIONS:")
     --version           Display version information
     --list-tools        List all supported tools
     --list-backups      List available backups for all tools
+    --all               Sync to all tools without interactive menu
     --dry-run           Preview operations without executing
     --verbose           Show detailed output
     --tool <name>       Sync/restore specific tool only
@@ -106,8 +107,10 @@ $(color_bold "OPTIONS:")
     --restore           Restore from backup (interactive)
 
 $(color_bold "EXAMPLES:")
-    agent-rules-sync                    # Sync to all tools
-    agent-rules-sync --dry-run          # Preview what will be synced
+    agent-rules-sync                    # Interactive: select tools to sync
+    agent-rules-sync --all              # Sync to all tools
+    agent-rules-sync --dry-run          # Preview with interactive selection
+    agent-rules-sync --all --dry-run    # Preview syncing all tools
     agent-rules-sync --tool claude      # Sync to Claude Code only
     agent-rules-sync --verbose          # Show detailed sync process
     agent-rules-sync --restore          # Restore from backup (interactive)
